@@ -1,17 +1,21 @@
-package Practica1;
+package practica1;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Random;
 
 public class Amazon {
 
-	private static boolean parProductos [][] = new boolean [20][20];
+	private static final int NUMPRODS = 20;
+	private static boolean parProductos [][] = new boolean [NUMPRODS][NUMPRODS];
 	private static Hashtable<String,Producto> datosProductos = new Hashtable<String,Producto> ();
 	
 	public static void main(String[] args) {
 		
 		generarProductos();		// Método que genera la lista de productos.
 		emparejar();		// Método que empareja los productos comprados juntos.
+		//mostrarParejas();
+		karger();
 	}
 
 	/*
@@ -54,14 +58,60 @@ public class Amazon {
 	}
 	
 	/*
+	 * Muestra parejas de productos.
+	 */
+	private static void mostrarParejas() {
+		System.out.println("Parejas de productos:");
+		for(int i = 0; i < NUMPRODS; i++) {
+			for(int j = i; j < NUMPRODS; j++) {
+				if(parProductos[i][j]) {
+					System.out.println("producto" + i + " producto" + j);
+				}
+			}
+		}
+	}
+	/*
 	 * Método que implementa el algoritmo de Karger para realizar una partición
 	 * de los productos cercana a la óptima.
 	 */
 	private static void karger(){
-		
-		for(int i=0; i<parProductos.length; i++){
-			
+		int nodos = NUMPRODS; 		//Numero inicial de nodos.
+		//tabal que representa los vertice que se encuentran unidos formando un nodo.
+		boolean[][] unidos = new boolean[parProductos.length][parProductos[0].length];
+		for(int i = 0; i < NUMPRODS; i++) {		//Un producto ya esta unid consigo mismo.
+			unidos[i][i] = true;
 		}
+		Random random = new Random();	//Se crea el objeto random.
+		while(nodos > 2) {				//Mientras haya mas de dos nodos.
+			if(comprobarKarger(unidos)) {		//Se comprueba que s epuede seguir usando el algoritmo.
+				//Se obtienen los dos nodos que se van a unir.
+				int aleatorio1 = random.nextInt(NUMPRODS);
+				int aleatorio2 = random.nextInt(NUMPRODS);
+				//Se comprueba que no esten unidos y que se puedan unir, si no se vuelven a generar.
+				while(!parProductos[aleatorio1][aleatorio2] || unidos[aleatorio1][aleatorio2]) {
+					aleatorio1 = random.nextInt(NUMPRODS);
+					aleatorio2 = random.nextInt(NUMPRODS);
+				}
+				//Se unen ambos conjuntos.
+				for(int i = 0; i < NUMPRODS; i++) {
+					if(unidos[aleatorio1][i]) {
+						unidos[aleatorio2][i] = true;
+						unidos[i][aleatorio2] = true;
+					}
+				}
+				for(int i = 0; i < NUMPRODS; i++) {
+					if(unidos[aleatorio2][i]) {
+						unidos[aleatorio1][i] = true;
+						unidos[i][aleatorio1] = true;
+					}
+				}
+				//Se reduce el numero de nodos.
+				nodos--;
+			} else {			//Si no se puede continuar se fuerza la finalización.
+				nodos = 2;
+			}
+		}
+		mostrarConjuntos(unidos);		//Se muestran los conjuntos.
 	}
 	
 	/*
@@ -70,5 +120,50 @@ public class Amazon {
 	 */
 	private static void karger_stein(){
 		
+	}
+	
+	
+	/*
+	 * Comprueba que s epueda seguir aplicando el algoritmo de karger.
+	 */
+	private static boolean comprobarKarger(boolean[][] unidos) {
+		boolean terminado = false;
+		for(int i = 0; i < NUMPRODS; i++) {
+			for(int j = 0; j < NUMPRODS; j++) {
+				//Si existen dos vertices conexos y que no estan unidos en un conjunto, se puede seguir.
+				if(parProductos[i][j] && !unidos[i][j]) {
+					terminado = true;		//Si se puede seguir se fuerza la salida del bucle.
+					break;
+				}
+			}
+			if(terminado) {
+				break;
+			}
+		}
+		return terminado;
+	}
+	
+	/*
+	 * Metodo que muestra los conjuntos creados.
+	 */
+	private static void mostrarConjuntos(boolean[][] unidos) {
+		//Se crea una array que contendra el conjunto1.
+		ArrayList<Integer> conjunto1 = new ArrayList<Integer>();
+		//Se muestra el conjunto1.
+		System.out.print("Conjunto 1: ");
+		for(int i = 0; i < NUMPRODS; i++) {
+			if(unidos[0][i]) {
+				System.out.print("producto" + i + " ");
+				conjunto1.add(i);		//Se añade al array.
+			}
+		}
+		System.out.println();
+		//Se muestra el conjunto2.
+		System.out.print("Conjunto 2: ");
+		for(int i = 0; i < NUMPRODS; i++) {
+			if(!conjunto1.contains(i)) {		//Si no esta en el array del cojunto1, se muestra.
+				System.out.print("producto" + i + " ");
+			}
+		}
 	}
 }
