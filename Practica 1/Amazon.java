@@ -92,19 +92,8 @@ public class Amazon {
 					aleatorio1 = random.nextInt(NUMPRODS);
 					aleatorio2 = random.nextInt(NUMPRODS);
 				}
-				//Se unen ambos conjuntos.
-				for(int i = 0; i < NUMPRODS; i++) {
-					if(unidos[aleatorio1][i]) {
-						unidos[aleatorio2][i] = true;
-						unidos[i][aleatorio2] = true;
-					}
-				}
-				for(int i = 0; i < NUMPRODS; i++) {
-					if(unidos[aleatorio2][i]) {
-						unidos[aleatorio1][i] = true;
-						unidos[i][aleatorio1] = true;
-					}
-				}
+				//Se unen los conjuntos de ambos números.
+				unidos = unirConjuntos(unidos, aleatorio1, aleatorio2);
 				//Se reduce el numero de nodos.
 				nodos--;
 			} else {			//Si no se puede continuar se fuerza la finalización.
@@ -141,6 +130,26 @@ public class Amazon {
 			}
 		}
 		return terminado;
+	}
+	
+	/*
+	 * Une los conjuntos disjuntos en los que se encuentran dos números.
+	 */
+	private static boolean[][] unirConjuntos(boolean[][] unidos, int aleatorio1, int aleatorio2) {
+		//Se unen ambos conjuntos.
+		for(int i = 0; i < NUMPRODS; i++) {
+			if(unidos[aleatorio1][i]) {
+				unidos[aleatorio2][i] = true;
+				unidos[i][aleatorio2] = true;
+			}
+		}
+		for(int i = 0; i < NUMPRODS; i++) {
+			if(unidos[aleatorio2][i]) {
+				unidos[aleatorio1][i] = true;
+				unidos[i][aleatorio1] = true;
+			}
+		}
+		return unidos;
 	}
 	
 	/*
