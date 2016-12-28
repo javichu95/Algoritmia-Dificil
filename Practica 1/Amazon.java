@@ -81,19 +81,21 @@ public class Amazon {
 		for(int i = 0; i < NUMPRODS; i++) {		//Un producto ya esta unid consigo mismo.
 			unidos[i][i] = true;
 		}
+		boolean[][] copiaPares = parProductos.clone();
 		Random random = new Random();	//Se crea el objeto random.
 		while(nodos > 2) {				//Mientras haya mas de dos nodos.
-			if(comprobarKarger(unidos)) {		//Se comprueba que s epuede seguir usando el algoritmo.
+			if(comprobarKarger(unidos,copiaPares)) {		//Se comprueba que se epuede seguir usando el algoritmo.
 				//Se obtienen los dos nodos que se van a unir.
 				int aleatorio1 = random.nextInt(NUMPRODS);
 				int aleatorio2 = random.nextInt(NUMPRODS);
 				//Se comprueba que no esten unidos y que se puedan unir, si no se vuelven a generar.
-				while(!parProductos[aleatorio1][aleatorio2] || unidos[aleatorio1][aleatorio2]) {
+				while(!copiaPares[aleatorio1][aleatorio2] || unidos[aleatorio1][aleatorio2]) {
 					aleatorio1 = random.nextInt(NUMPRODS);
 					aleatorio2 = random.nextInt(NUMPRODS);
 				}
 				//Se unen los conjuntos de ambos números.
 				unidos = unirConjuntos(unidos, aleatorio1, aleatorio2);
+				copiaPares = conectarNodos(aleatorio1,aleatorio2,copiaPares);
 				//Se reduce el numero de nodos.
 				nodos--;
 			} else {			//Si no se puede continuar se fuerza la finalización.
@@ -115,12 +117,12 @@ public class Amazon {
 	/*
 	 * Comprueba que s epueda seguir aplicando el algoritmo de karger.
 	 */
-	private static boolean comprobarKarger(boolean[][] unidos) {
+	private static boolean comprobarKarger(boolean[][] unidos,boolean[][] pares) {
 		boolean terminado = false;
 		for(int i = 0; i < NUMPRODS; i++) {
 			for(int j = 0; j < NUMPRODS; j++) {
 				//Si existen dos vertices conexos y que no estan unidos en un conjunto, se puede seguir.
-				if(parProductos[i][j] && !unidos[i][j]) {
+				if(pares[i][j] && !unidos[i][j]) {
 					terminado = true;		//Si se puede seguir se fuerza la salida del bucle.
 					break;
 				}
@@ -141,15 +143,28 @@ public class Amazon {
 			if(unidos[aleatorio1][i]) {
 				unidos[aleatorio2][i] = true;
 				unidos[i][aleatorio2] = true;
-			}
-		}
-		for(int i = 0; i < NUMPRODS; i++) {
-			if(unidos[aleatorio2][i]) {
+			} else if(unidos[aleatorio2][i]) {
 				unidos[aleatorio1][i] = true;
 				unidos[i][aleatorio1] = true;
 			}
 		}
 		return unidos;
+	}
+	
+	/*
+	 * Conecta aleatorio1 con los vecinos de aleatorio2 y viceversa.
+	 */
+	private static boolean[][] conectarNodos(int aleatorio1,int aleatorio2, boolean[][] pares) {
+		for(int i = 0;i<NUMPRODS;i++) {
+			if(pares[aleatorio1][i]) {
+				pares[aleatorio2][i] = true;
+				pares[i][aleatorio2] = true;
+			} else if(pares[aleatorio2][i]) {
+				pares[aleatorio1][i] = true;
+				pares[i][aleatorio1] = true;
+			}
+		}
+		return pares;
 	}
 	
 	/*
