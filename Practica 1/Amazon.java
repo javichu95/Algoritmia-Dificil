@@ -84,7 +84,7 @@ public class Amazon {
 		boolean[][] copiaPares = parProductos.clone();
 		Random random = new Random();	//Se crea el objeto random.
 		while(nodos > 2) {				//Mientras haya mas de dos nodos.
-			if(comprobarKarger(unidos,copiaPares)) {		//Se comprueba que se epuede seguir usando el algoritmo.
+			if(comprobarKarger(unidos,copiaPares)) {		//Se comprueba que se puede seguir usando el algoritmo.
 				//Se obtienen los dos nodos que se van a unir.
 				int aleatorio1 = random.nextInt(NUMPRODS);
 				int aleatorio2 = random.nextInt(NUMPRODS);
@@ -95,7 +95,7 @@ public class Amazon {
 				}
 				//Se unen los conjuntos de ambos números.
 				unidos = unirConjuntos(unidos, aleatorio1, aleatorio2);
-				copiaPares = conectarNodos(aleatorio1,aleatorio2,copiaPares);
+				copiaPares = conectarNodos(aleatorio1,aleatorio2,copiaPares,unidos);
 				//Se reduce el numero de nodos.
 				nodos--;
 			} else {			//Si no se puede continuar se fuerza la finalización.
@@ -141,9 +141,21 @@ public class Amazon {
 		//Se unen ambos conjuntos.
 		for(int i = 0; i < NUMPRODS; i++) {
 			if(unidos[aleatorio1][i]) {
+				for(int j = 0; j< NUMPRODS; j++) {
+					if(unidos[aleatorio2][j]) {
+						unidos[i][j] = true;
+						unidos[j][i] = true;
+					}
+				}
 				unidos[aleatorio2][i] = true;
 				unidos[i][aleatorio2] = true;
 			} else if(unidos[aleatorio2][i]) {
+				for(int j = 0; j< NUMPRODS; j++) {
+					if(unidos[aleatorio1][j]) {
+						unidos[i][j] = true;
+						unidos[j][i] = true;
+					}
+				}
 				unidos[aleatorio1][i] = true;
 				unidos[i][aleatorio1] = true;
 			}
@@ -154,12 +166,24 @@ public class Amazon {
 	/*
 	 * Conecta aleatorio1 con los vecinos de aleatorio2 y viceversa.
 	 */
-	private static boolean[][] conectarNodos(int aleatorio1,int aleatorio2, boolean[][] pares) {
+	private static boolean[][] conectarNodos(int aleatorio1,int aleatorio2, boolean[][] pares, boolean[][] unidos) {
 		for(int i = 0;i<NUMPRODS;i++) {
 			if(pares[aleatorio1][i]) {
+				for(int j = 0; j< NUMPRODS; j++) {
+					if(unidos[aleatorio2][j]) {
+						pares[i][j] = true;
+						pares[j][i] = true;
+					}
+				}
 				pares[aleatorio2][i] = true;
 				pares[i][aleatorio2] = true;
 			} else if(pares[aleatorio2][i]) {
+				for(int j = 0; j< NUMPRODS; j++) {
+					if(unidos[aleatorio1][j]) {
+						pares[i][j] = true;
+						pares[j][i] = true;
+					}
+				}
 				pares[aleatorio1][i] = true;
 				pares[i][aleatorio1] = true;
 			}
@@ -178,14 +202,16 @@ public class Amazon {
 		for(int i = 0; i < NUMPRODS; i++) {
 			if(unidos[0][i]) {
 				System.out.print("producto" + i + " ");
+			} else {
 				conjunto1.add(i);		//Se añade al array.
 			}
 		}
 		System.out.println();
 		//Se muestra el conjunto2.
 		System.out.print("Conjunto 2: ");
+		int vertice = conjunto1.get(0);
 		for(int i = 0; i < NUMPRODS; i++) {
-			if(!conjunto1.contains(i)) {		//Si no esta en el array del cojunto1, se muestra.
+			if(unidos[vertice][i]) {		//Si no esta en el array del cojunto1, se muestra.
 				System.out.print("producto" + i + " ");
 			}
 		}
