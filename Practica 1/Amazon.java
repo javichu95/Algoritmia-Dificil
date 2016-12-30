@@ -1,20 +1,30 @@
-package practica1;
+package Practica1;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Random;
+import java.util.Set;
 
 public class Amazon {
 
-	private static final int NUMPRODS = 20;
+	private static final int NUMPRODS = 10;	// Número total de productos.
+	// Tabla que dice si un cierto producto ha sido comprado con otro.
 	private static boolean parProductos [][] = new boolean [NUMPRODS][NUMPRODS];
+	// Datos de los productos.
 	private static Hashtable<String,Producto> datosProductos = new Hashtable<String,Producto> ();
+	// Empareja los índices de la tabla de pares con el producto original.
+	private static Hashtable<String,String> indiceProd = new Hashtable<String,String> ();
+	// Grafo con los vértices y aristas de los productos.
+	private static Hashtable<String,Nodo> grafo = new Hashtable<String,Nodo> ();
 	
 	public static void main(String[] args) {
 		
 		generarProductos();		// Método que genera la lista de productos.
 		emparejar();		// Método que empareja los productos comprados juntos.
-		//mostrarParejas();
+		generarGrafo();		// Método que genera el grafo a partir de la lista de vértices.
+		mostrarParejas();
+		System.out.println("\n");
+		mostrarGrafo();
 		karger();
 	}
 
@@ -32,6 +42,8 @@ public class Amazon {
 			String marca = "marca" + i%5;		// Marca del producto.
 			// Introduce el producto en la tabla hash.
 			datosProductos.put(nombre,new Producto(nombre,unidades,precio,descuento,marca));
+			// Correspondencia entre el producto y su índice en la tabla de pares.
+			indiceProd.put(Integer.toString(i), nombre);
 		}
 	}
 	
@@ -58,51 +70,105 @@ public class Amazon {
 	}
 	
 	/*
+	 * Método que genera el grafo a partir de los productos emparejados.
+	 */
+	private static void generarGrafo(){
+		for(int i=0; i<datosProductos.size(); i++){	// Recorre la matriz en diagonal superior.
+			// Añade un vértice.
+			Nodo nuevoVertice = new Nodo(Integer.toString(i),indiceProd.get(Integer.toString(i)));
+			for(int j=0; j<datosProductos.size(); j++){
+				if(i!=j && parProductos[i][j]){
+					// Añadir arista al vértice i con vértice j.
+					Nodo verticeUnido = new Nodo(Integer.toString(j),indiceProd.get(Integer.toString(j)));
+					nuevoVertice.anadirArista(Integer.toString(j),verticeUnido);
+				}
+			}
+			grafo.put(Integer.toString(i), nuevoVertice);
+		}
+	}
+	
+	/*
 	 * Muestra parejas de productos.
 	 */
 	private static void mostrarParejas() {
 		System.out.println("Parejas de productos:");
 		for(int i = 0; i < NUMPRODS; i++) {
-			for(int j = i; j < NUMPRODS; j++) {
-				if(parProductos[i][j]) {
-					System.out.println("producto" + i + " producto" + j);
+			System.out.print(indiceProd.get(Integer.toString(i))+ ": ");
+			for(int j = 0; j < NUMPRODS; j++) {
+				if(i!=j && parProductos[i][j]) {
+					System.out.print(indiceProd.get(Integer.toString(j)) + " ");
 				}
 			}
+			System.out.println();
 		}
 	}
+	
+	/*
+	 * Muestra el grafo actual.
+	 */
+	private static void mostrarGrafo(){
+		for(int i=0; i< NUMPRODS; i++){
+			Nodo nodo = grafo.get(Integer.toString(i));
+			System.out.print(indiceProd.get(Integer.toString(i)) + ": ");
+			for(int j=0; j < NUMPRODS; j++){
+				if(nodo.getArista(Integer.toString(j)) != null){
+					System.out.print(nodo.getArista(Integer.toString(j)).getNombre() + " ");
+				}
+			}
+			System.out.println();
+		}
+	}
+	
 	/*
 	 * Método que implementa el algoritmo de Karger para realizar una partición
 	 * de los productos cercana a la óptima.
 	 */
 	private static void karger(){
 		int nodos = NUMPRODS; 		//Numero inicial de nodos.
-		//tabal que representa los vertice que se encuentran unidos formando un nodo.
-		boolean[][] unidos = new boolean[parProductos.length][parProductos[0].length];
-		for(int i = 0; i < NUMPRODS; i++) {		//Un producto ya esta unid consigo mismo.
-			unidos[i][i] = true;
-		}
-		boolean[][] copiaPares = parProductos.clone();
 		Random random = new Random();	//Se crea el objeto random.
 		while(nodos > 2) {				//Mientras haya mas de dos nodos.
-			if(comprobarKarger(unidos,copiaPares)) {		//Se comprueba que se puede seguir usando el algoritmo.
-				//Se obtienen los dos nodos que se van a unir.
-				int aleatorio1 = random.nextInt(NUMPRODS);
-				int aleatorio2 = random.nextInt(NUMPRODS);
-				//Se comprueba que no esten unidos y que se puedan unir, si no se vuelven a generar.
-				while(!copiaPares[aleatorio1][aleatorio2] || unidos[aleatorio1][aleatorio2]) {
-					aleatorio1 = random.nextInt(NUMPRODS);
-					aleatorio2 = random.nextInt(NUMPRODS);
-				}
-				//Se unen los conjuntos de ambos números.
-				unidos = unirConjuntos(unidos, aleatorio1, aleatorio2);
-				copiaPares = conectarNodos(aleatorio1,aleatorio2,copiaPares,unidos);
-				//Se reduce el numero de nodos.
-				nodos--;
-			} else {			//Si no se puede continuar se fuerza la finalización.
-				nodos = 2;
+			//Se obtienen los dos nodos que se van a unir.
+			Object key [] = grafo.keySet().toArray();
+			String claves [] = Arrays.copyOf(key,key.length,String[].class);
+			int random1 = random.nextInt(claves.length);
+			Nodo vertice1 = grafo.get(claves[random1]);
+			System.out.println("vertice1: " + vertice1.getNombre());
+			if(vertice1.numAristas() == 0){
+				// Unir sin más.
+			} else{
+				key = vertice1.getKeys().toArray();
+				claves = Arrays.copyOf(key,key.length,String[].class);
+				int random2 = random.nextInt(claves.length);
+				Nodo vertice2 = grafo.get(claves[random2]);
+				System.out.println("vertice2: " + vertice2.getNombre());
+				// Unir los dos vértices.
+				unir(vertice1,vertice2);
+				// Vértice1 tiene clave aleatorio1 y Vértice2 tiene clave aleatorio2.
+			}
+			//Se reduce el numero de nodos.
+			nodos--;
+		}
+		//mostrarConjuntos(unidos);		//Se muestran los conjuntos.
+	}
+	
+	/*
+	 * Método que une dos ciertos vértices en uno sólo.
+	 */
+	private static void unir(Nodo vertice1, Nodo vertice2){
+		Hashtable<String,Nodo> aristas1 = vertice1.getAristas();
+		aristas1.putAll(vertice2.getAristas());
+		Object key [] = grafo.keySet().toArray();
+		String claves [] = Arrays.copyOf(key,key.length,String[].class);
+		for(int i=0; i<claves.length; i++){
+			if(grafo.get(claves[i]).getArista(vertice1.getClave()) != null){
+				// Se modifica el nombre de la arista.
+			}
+			if(grafo.get(claves[i]).getArista(vertice2.getClave()) != null){
+				// Se modifica el nombre de la arista.
 			}
 		}
-		mostrarConjuntos(unidos);		//Se muestran los conjuntos.
+		// Se borra el nodo vertice2.
+		grafo.remove(vertice2.getClave());
 	}
 	
 	/*
@@ -132,88 +198,5 @@ public class Amazon {
 			}
 		}
 		return terminado;
-	}
-	
-	/*
-	 * Une los conjuntos disjuntos en los que se encuentran dos números.
-	 */
-	private static boolean[][] unirConjuntos(boolean[][] unidos, int aleatorio1, int aleatorio2) {
-		//Se unen ambos conjuntos.
-		for(int i = 0; i < NUMPRODS; i++) {
-			if(unidos[aleatorio1][i]) {
-				for(int j = 0; j< NUMPRODS; j++) {
-					if(unidos[aleatorio2][j]) {
-						unidos[i][j] = true;
-						unidos[j][i] = true;
-					}
-				}
-				unidos[aleatorio2][i] = true;
-				unidos[i][aleatorio2] = true;
-			} else if(unidos[aleatorio2][i]) {
-				for(int j = 0; j< NUMPRODS; j++) {
-					if(unidos[aleatorio1][j]) {
-						unidos[i][j] = true;
-						unidos[j][i] = true;
-					}
-				}
-				unidos[aleatorio1][i] = true;
-				unidos[i][aleatorio1] = true;
-			}
-		}
-		return unidos;
-	}
-	
-	/*
-	 * Conecta aleatorio1 con los vecinos de aleatorio2 y viceversa.
-	 */
-	private static boolean[][] conectarNodos(int aleatorio1,int aleatorio2, boolean[][] pares, boolean[][] unidos) {
-		for(int i = 0;i<NUMPRODS;i++) {
-			if(pares[aleatorio1][i]) {
-				for(int j = 0; j< NUMPRODS; j++) {
-					if(unidos[aleatorio2][j]) {
-						pares[i][j] = true;
-						pares[j][i] = true;
-					}
-				}
-				pares[aleatorio2][i] = true;
-				pares[i][aleatorio2] = true;
-			} else if(pares[aleatorio2][i]) {
-				for(int j = 0; j< NUMPRODS; j++) {
-					if(unidos[aleatorio1][j]) {
-						pares[i][j] = true;
-						pares[j][i] = true;
-					}
-				}
-				pares[aleatorio1][i] = true;
-				pares[i][aleatorio1] = true;
-			}
-		}
-		return pares;
-	}
-	
-	/*
-	 * Metodo que muestra los conjuntos creados.
-	 */
-	private static void mostrarConjuntos(boolean[][] unidos) {
-		//Se crea una array que contendra el conjunto1.
-		ArrayList<Integer> conjunto1 = new ArrayList<Integer>();
-		//Se muestra el conjunto1.
-		System.out.print("Conjunto 1: ");
-		for(int i = 0; i < NUMPRODS; i++) {
-			if(unidos[0][i]) {
-				System.out.print("producto" + i + " ");
-			} else {
-				conjunto1.add(i);		//Se añade al array.
-			}
-		}
-		System.out.println();
-		//Se muestra el conjunto2.
-		System.out.print("Conjunto 2: ");
-		int vertice = conjunto1.get(0);
-		for(int i = 0; i < NUMPRODS; i++) {
-			if(unidos[vertice][i]) {		//Si no esta en el array del cojunto1, se muestra.
-				System.out.print("producto" + i + " ");
-			}
-		}
 	}
 }
