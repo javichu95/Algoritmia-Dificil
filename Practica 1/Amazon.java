@@ -15,22 +15,22 @@ public class Amazon {
 	// Empareja los índices de la tabla de pares con el producto original.
 	private static Hashtable<String,String> indiceProd = new Hashtable<String,String> ();
 	// Grafo con los vértices y aristas de los productos.
-	private static Hashtable<String,Nodo> grafo = new Hashtable<String,Nodo> ();
+	private static Hashtable<String,Nodo> grafoKarger = new Hashtable<String,Nodo> ();
+	private static Hashtable<String,Nodo> grafoKargerStein = new Hashtable<String,Nodo> ();
 	
 	public static void main(String[] args) {
 		
 		generarProductos();		// Método que genera la lista de productos.
 		emparejar();		// Método que empareja los productos comprados juntos.
-		generarGrafo();		// Método que genera el grafo a partir de la lista de vértices.
+		generarGrafo(grafoKarger);		// Método que genera el grafo a partir de la lista de vértices.
+		generarGrafo(grafoKargerStein);		// Método que genera el grafo a partir de la lista de vértices.
 		//mostrarParejas();
-		Hashtable<String,Nodo> grafoKarger = (Hashtable<String,Nodo>)grafo.clone();
 		grafoKarger = karger(grafoKarger,2);
 		System.out.println("Karger:");
 		mostrarKarger(grafoKarger);
-		/*Hashtable<String,Nodo> grafoKargerStein = (Hashtable<String,Nodo>)grafo.clone();
 		grafoKargerStein = karger_stein(grafoKargerStein);		// Método que resuelve el algoritmo de karger_Stein.
 		System.out.println("Karger Stein:");
-		mostrarKarger(grafoKargerStein);*/
+		mostrarKarger(grafoKargerStein);
 	}
 
 	/*
@@ -77,7 +77,7 @@ public class Amazon {
 	/*
 	 * Método que genera el grafo a partir de los productos emparejados.
 	 */
-	private static void generarGrafo(){
+	private static Hashtable<String,Nodo> generarGrafo(Hashtable<String,Nodo> grafo){
 		for(int i=0; i<datosProductos.size(); i++){	// Recorre la matriz en diagonal superior.
 			// Añade un vértice.
 			Nodo nuevoVertice = new Nodo(Integer.toString(i));
@@ -91,6 +91,7 @@ public class Amazon {
 			// Introduce el vértice en el grafo.
 			grafo.put(Integer.toString(i), nuevoVertice);
 		}
+		return grafo;
 	}
 	
 	/*
@@ -112,7 +113,7 @@ public class Amazon {
 	/*
 	 * Método que muestra el grafo actual.
 	 */
-	private static void mostrarGrafo(){
+	/*private static void mostrarGrafo(){
 		for(int i=0; i< NUMPRODS; i++){
 			if(grafo.get(Integer.toString(i)) != null){
 				Nodo nodo = grafo.get(Integer.toString(i));
@@ -125,7 +126,7 @@ public class Amazon {
 				System.out.println();
 			}
 		}
-	}
+	}*/
 	
 	/*
 	 * Método que implementa el algoritmo de Karger para realizar una partición
