@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
 
+/**
+ * Clase que representa una abstracción de un nodo/vértice a almacenar en
+ * una tabla hash.
+ */
 public class Nodo {
 
-	private String clave;
-	private ArrayList<String> prodCombinados;
-	private Hashtable<String,Nodo> aristas;
+	private String clave;		// Clave del nodo en la tabla hash.
+	private ArrayList<String> prodCombinados;		// Lista de los vértices combinados.
+	private Hashtable<String,Nodo> aristas;		// Aristas que conectan con otros vértices.
 	
 	/*
 	 * Método constructor de un objeto Nodo.
@@ -27,17 +31,11 @@ public class Nodo {
 	}
 	
 	/*
-	 * Método que fija la lista de productos combinados en un único vértice.
-	 */
-	public void setProdCombinados(ArrayList<String> prodCombinados) {
-		this.prodCombinados = prodCombinados;
-	}
-	
-	/*
 	 * Método que añade un cierto producto al combinarlos.
 	 */
-	public void anadirProd(String nombre){
+	public void anadirProd(String nombre, ArrayList<String> unidos){
 		prodCombinados.add(nombre);
+		prodCombinados.addAll(unidos);
 	}
 	
 	/*

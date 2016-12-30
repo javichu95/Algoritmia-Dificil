@@ -1,13 +1,13 @@
 package Practica1;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Random;
-import java.util.Set;
 
 public class Amazon {
 
-	private static final int NUMPRODS = 10;	// Número total de productos.
+	private static final int NUMPRODS = 2000;	// Número total de productos.
 	// Tabla que dice si un cierto producto ha sido comprado con otro.
 	private static boolean parProductos [][] = new boolean [NUMPRODS][NUMPRODS];
 	// Datos de los productos.
@@ -22,8 +22,8 @@ public class Amazon {
 		generarProductos();		// Método que genera la lista de productos.
 		emparejar();		// Método que empareja los productos comprados juntos.
 		generarGrafo();		// Método que genera el grafo a partir de la lista de vértices.
-		mostrarParejas();
-		karger();
+		//mostrarParejas();
+		karger();		// Método que resuelve el algoritmo de karger.
 		mostrarKarger();
 	}
 
@@ -82,6 +82,7 @@ public class Amazon {
 					nuevoVertice.anadirArista(Integer.toString(j),verticeUnido);
 				}
 			}
+			// Introduce el vértice en el grafo.
 			grafo.put(Integer.toString(i), nuevoVertice);
 		}
 	}
@@ -103,7 +104,7 @@ public class Amazon {
 	}
 	
 	/*
-	 * Muestra el grafo actual.
+	 * Método que muestra el grafo actual.
 	 */
 	private static void mostrarGrafo(){
 		for(int i=0; i< NUMPRODS; i++){
@@ -125,53 +126,67 @@ public class Amazon {
 	 * de los productos cercana a la óptima.
 	 */
 	private static void karger(){
-		int nodos = NUMPRODS; 		//Numero inicial de nodos.
-		Random random = new Random();	//Se crea el objeto random.
-		while(nodos > 2) {				//Mientras haya mas de dos nodos.
-			System.out.println("\n");
-			mostrarGrafo();
+		int nodos = NUMPRODS; 		// Número inicial de nodos.
+		Random random = new Random();	// Se crea el objeto random.
+		while(nodos > 2) {				// Mientras haya más de dos nodos.
 			//Se obtienen los dos nodos que se van a unir.
 			Object key [] = grafo.keySet().toArray();
 			String claves [] = Arrays.copyOf(key,key.length,String[].class);
+			// Primer vértice aleatorio.
 			int random1 = random.nextInt(claves.length);
-			Nodo vertice1 = grafo.get(claves[random1]);
-			System.out.println("vertice1: " + vertice1.getClave());
+			Nodo vertice1 = grafo.get(claves[random1]);	// Claves de los vértices adyacentes.
 			if(vertice1.numAristas() == 0){
-				// Unir sin más.
+				// El grafo tiene que ser conexo y se muestra error.
+				System.err.println("El grafo tiene que ser conexo.");
+				System.exit(1);
 			} else{
+				// Si tiene vértices adyacentes, se selecciona uno aleatorio.
 				key = vertice1.getKeys().toArray();
 				claves = Arrays.copyOf(key,key.length,String[].class);
 				int random2 = random.nextInt(claves.length);
+				// Se obtiene el vértice.
 				Nodo vertice2 = grafo.get(claves[random2]);
-				System.out.println("vertice2: " + vertice2.getClave());
-				// Unir los dos vértices.
-				unir(vertice1,vertice2);
-				// Vértice1 tiene clave aleatorio1 y Vértice2 tiene clave aleatorio2.
+				unir(vertice1,vertice2);		// Método que une los dos vértices en uno.
 			}
 			//Se reduce el numero de nodos.
 			nodos--;
 		}
-		//mostrarConjuntos(unidos);		//Se muestran los conjuntos.
 	}
 	
 	/*
-	 * Método que une dos ciertos vértices en uno sólo.
+	 * Método que une dos ciertos vértices en uno sólo, combinando sus aristas.
 	 */
 	private static void unir(Nodo vertice1, Nodo vertice2){
+		// Obtiene las aristas del primer vértice.
 		Hashtable<String,Nodo> aristas1 = vertice1.getAristas();
+		// Combina en el primer vértice las aristas del segundo.
 		aristas1.putAll(vertice2.getAristas());
-		vertice1.anadirProd(vertice2.getClave());
+		// Elimina los propios vértices de los adyacentes (no generar aristas a si mismo).
+		aristas1.remove(vertice1.getClave());
+		aristas1.remove(vertice2.getClave());
+		// Se borra el vértice 2 de la lista de vértices.
+		grafo.remove(vertice2.getClave());
+		// Se añade el vértice a la lista de combinados para saber los conjuntos.
+		vertice1.anadirProd(vertice2.getClave(),vertice2.getProdCombinados());
 		Object key [] = grafo.keySet().toArray();
 		String claves [] = Arrays.copyOf(key,key.length,String[].class);
-		for(int i=0; i<claves.length; i++){
+		for(int i=0; i<claves.length; i++){		
+			// Se recorren el resto de vértices para actualizar con la nueva unión.
+			Hashtable<String,Nodo> aristas = grafo.get(claves[i]).getAristas();
+			// Si tiene el segundo vértice en su lista...
 			if(grafo.get(claves[i]).getArista(vertice2.getClave()) != null){
-				// Se modifica el nombre de la arista.
-				Hashtable<String,Nodo> aristas = grafo.get(claves[i]).getAristas();
-				aristas.remove(vertice2.getClave());
+				// Si tiene el primer y el segundo vértice...
+				if(grafo.get(claves[i]).getArista(vertice1.getClave()) != null){
+					// Se borra el segundo vértice.
+					aristas.remove(vertice2.getClave());
+				} else{		// Si tiene sólo el segundo vértice...
+					// Se añade un vértice con el nombre del primero.
+					aristas.put(vertice1.getClave(), new Nodo(vertice1.getClave()));
+					// Se elimina el segundo vértice.
+					aristas.remove(vertice2.getClave());
+				}
 			}
 		}
-		// Se borra el nodo vertice2.
-		grafo.remove(vertice2.getClave());
 	}
 	
 	/*
@@ -180,15 +195,15 @@ public class Amazon {
 	private static void mostrarKarger(){
 		Object key [] = grafo.keySet().toArray();
 		String claves [] = Arrays.copyOf(key,key.length,String[].class);
-		for(int i=0; i<grafo.size(); i++){
+		for(int i=0; i<grafo.size(); i++){		// Recorre la tabla obteniendo los conjuntos.
 			System.out.print("Conjunto " + i + ": " + indiceProd.get(claves[i]) + " ");
 			Nodo nodo = grafo.get(claves[i]);
-			Object key2 [] = nodo.getAristas().keySet().toArray();
-			String claves2 [] = Arrays.copyOf(key2,key2.length,String[].class);
-			for(int j=0; j<nodo.numAristas(); j++){
-				System.out.print(indiceProd.get(claves2[j]) + " ");
+			ArrayList<String> claves2 = nodo.getProdCombinados();
+			for(int j=0; j<claves2.size(); j++){		// Muestra los elementos de un conjunto.
+				System.out.print(indiceProd.get(claves2.get(j)) + " ");
 			}
 			System.out.println();
+			System.out.println("Tamaño: " + claves2.size());	// Muestra el tamaño del conjunto.
 		}
 	}
 	
