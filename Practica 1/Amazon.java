@@ -23,9 +23,8 @@ public class Amazon {
 		emparejar();		// Método que empareja los productos comprados juntos.
 		generarGrafo();		// Método que genera el grafo a partir de la lista de vértices.
 		mostrarParejas();
-		System.out.println("\n");
-		mostrarGrafo();
 		karger();
+		mostrarKarger();
 	}
 
 	/*
@@ -75,11 +74,11 @@ public class Amazon {
 	private static void generarGrafo(){
 		for(int i=0; i<datosProductos.size(); i++){	// Recorre la matriz en diagonal superior.
 			// Añade un vértice.
-			Nodo nuevoVertice = new Nodo(Integer.toString(i),indiceProd.get(Integer.toString(i)));
+			Nodo nuevoVertice = new Nodo(Integer.toString(i));
 			for(int j=0; j<datosProductos.size(); j++){
 				if(i!=j && parProductos[i][j]){
 					// Añadir arista al vértice i con vértice j.
-					Nodo verticeUnido = new Nodo(Integer.toString(j),indiceProd.get(Integer.toString(j)));
+					Nodo verticeUnido = new Nodo(Integer.toString(j));
 					nuevoVertice.anadirArista(Integer.toString(j),verticeUnido);
 				}
 			}
@@ -108,14 +107,16 @@ public class Amazon {
 	 */
 	private static void mostrarGrafo(){
 		for(int i=0; i< NUMPRODS; i++){
-			Nodo nodo = grafo.get(Integer.toString(i));
-			System.out.print(indiceProd.get(Integer.toString(i)) + ": ");
-			for(int j=0; j < NUMPRODS; j++){
-				if(nodo.getArista(Integer.toString(j)) != null){
-					System.out.print(nodo.getArista(Integer.toString(j)).getNombre() + " ");
+			if(grafo.get(Integer.toString(i)) != null){
+				Nodo nodo = grafo.get(Integer.toString(i));
+				System.out.print(indiceProd.get(Integer.toString(i)) + ": ");
+				for(int j=0; j < NUMPRODS; j++){
+					if(nodo.getArista(Integer.toString(j)) != null){
+						System.out.print(indiceProd.get(nodo.getArista(Integer.toString(j)).getClave()) + " ");
+					}
 				}
+				System.out.println();
 			}
-			System.out.println();
 		}
 	}
 	
@@ -127,12 +128,14 @@ public class Amazon {
 		int nodos = NUMPRODS; 		//Numero inicial de nodos.
 		Random random = new Random();	//Se crea el objeto random.
 		while(nodos > 2) {				//Mientras haya mas de dos nodos.
+			System.out.println("\n");
+			mostrarGrafo();
 			//Se obtienen los dos nodos que se van a unir.
 			Object key [] = grafo.keySet().toArray();
 			String claves [] = Arrays.copyOf(key,key.length,String[].class);
 			int random1 = random.nextInt(claves.length);
 			Nodo vertice1 = grafo.get(claves[random1]);
-			System.out.println("vertice1: " + vertice1.getNombre());
+			System.out.println("vertice1: " + vertice1.getClave());
 			if(vertice1.numAristas() == 0){
 				// Unir sin más.
 			} else{
@@ -140,7 +143,7 @@ public class Amazon {
 				claves = Arrays.copyOf(key,key.length,String[].class);
 				int random2 = random.nextInt(claves.length);
 				Nodo vertice2 = grafo.get(claves[random2]);
-				System.out.println("vertice2: " + vertice2.getNombre());
+				System.out.println("vertice2: " + vertice2.getClave());
 				// Unir los dos vértices.
 				unir(vertice1,vertice2);
 				// Vértice1 tiene clave aleatorio1 y Vértice2 tiene clave aleatorio2.
@@ -157,18 +160,36 @@ public class Amazon {
 	private static void unir(Nodo vertice1, Nodo vertice2){
 		Hashtable<String,Nodo> aristas1 = vertice1.getAristas();
 		aristas1.putAll(vertice2.getAristas());
+		vertice1.anadirProd(vertice2.getClave());
 		Object key [] = grafo.keySet().toArray();
 		String claves [] = Arrays.copyOf(key,key.length,String[].class);
 		for(int i=0; i<claves.length; i++){
-			if(grafo.get(claves[i]).getArista(vertice1.getClave()) != null){
-				// Se modifica el nombre de la arista.
-			}
 			if(grafo.get(claves[i]).getArista(vertice2.getClave()) != null){
 				// Se modifica el nombre de la arista.
+				Hashtable<String,Nodo> aristas = grafo.get(claves[i]).getAristas();
+				aristas.remove(vertice2.getClave());
 			}
 		}
 		// Se borra el nodo vertice2.
 		grafo.remove(vertice2.getClave());
+	}
+	
+	/*
+	 * Método que muestra el resultado final del algoritmo de karger.
+	 */
+	private static void mostrarKarger(){
+		Object key [] = grafo.keySet().toArray();
+		String claves [] = Arrays.copyOf(key,key.length,String[].class);
+		for(int i=0; i<grafo.size(); i++){
+			System.out.print("Conjunto " + i + ": " + indiceProd.get(claves[i]) + " ");
+			Nodo nodo = grafo.get(claves[i]);
+			Object key2 [] = nodo.getAristas().keySet().toArray();
+			String claves2 [] = Arrays.copyOf(key2,key2.length,String[].class);
+			for(int j=0; j<nodo.numAristas(); j++){
+				System.out.print(indiceProd.get(claves2[j]) + " ");
+			}
+			System.out.println();
+		}
 	}
 	
 	/*

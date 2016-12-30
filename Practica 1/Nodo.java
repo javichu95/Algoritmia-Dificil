@@ -7,32 +7,16 @@ import java.util.Set;
 public class Nodo {
 
 	private String clave;
-	private String nombre;
 	private ArrayList<String> prodCombinados;
 	private Hashtable<String,Nodo> aristas;
 	
 	/*
 	 * Método constructor de un objeto Nodo.
 	 */
-	public Nodo(String clave, String nombre){
+	public Nodo(String clave){
 		this.clave = clave;
-		this.nombre = nombre;
 		prodCombinados = new ArrayList<String>();
 		aristas = new Hashtable<String,Nodo>();
-	}
-	
-	/*
-	 * Método que devuelve el producto del nodo.
-	 */
-	public String getNombre() {
-		return nombre;
-	}
-	
-	/*
-	 * Método que fija el producto del nodo.
-	 */
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
 	}
 	
 	/*
