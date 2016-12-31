@@ -16,6 +16,7 @@ public class Amazon {
 	private static Hashtable<String,String> indiceProd = new Hashtable<String,String> ();
 	// Grafo con los vértices y aristas de los productos.
 	private static Hashtable<String,Nodo> grafoKarger = new Hashtable<String,Nodo> ();
+	//Grafo con identico al anterior pero sobre elque se aplicara el algoritmo Karger-Stein.
 	private static Hashtable<String,Nodo> grafoKargerStein = new Hashtable<String,Nodo> ();
 	
 	public static void main(String[] args) {
