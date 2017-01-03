@@ -1,4 +1,4 @@
-package Practica1;
+package practica1;
 
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -23,7 +23,7 @@ public class Amazon {
 	 */
 	private static void comprobarArgumentos(String [] args){
 		
-		if(args.length != 4){			// Error con los argumentos.
+		if(args.length != 2){			// Error con los argumentos.
 			System.err.println("Usar: java Amazon -alg [karger|karger_stein|"
 					+ "kargerPesos|karger_steinPesos]");
 			System.exit(0);
@@ -56,7 +56,7 @@ public class Amazon {
 					break;
 				case "kargerPesos":
 					Grafo.generarProductos();		// Método que genera la lista de productos.
-					Grafo.emparejarPesos();		// Método que empareja los productos comprados juntos.
+					//Grafo.emparejarPesos();		// Método que empareja los productos comprados juntos.
 					Grafo.generarGrafoPesos();		// Método que genera el grafo.
 					Grafo.mostrarGrafo(); 		// Se muestra el grafo.
 					Grafo.grafo = kargerPesos(Grafo.grafo,2);		// Método que resuelve el algoritmo de karger.
@@ -197,8 +197,6 @@ public class Amazon {
 		
 		// Obtiene las aristas del primer vértice.
 		Hashtable<String,Nodo> aristas1 = vertice1.getAristas();
-		// Combina en el primer vértice las aristas del segundo.
-		aristas1.putAll(vertice2.getAristas());
 		
 		// Elimina los propios vértices de los adyacentes (no generar aristas a si mismo).
 		for(int i = 0; i < Grafo.pesosProductos[Integer.parseInt(vertice1.getClave())][Integer.parseInt(vertice2.getClave())]; i++) {
@@ -225,6 +223,10 @@ public class Amazon {
 					aristas.put(vertice1.getClave()+ "_" +
 							(Grafo.pesosProductos[Integer.parseInt(claves[i])][Integer.parseInt(vertice1.getClave())]+j), 
 								new Nodo(vertice1.getClave()));
+					//Se añade la misma arista en vertice1 hacia el nodo i.
+					aristas1.put(claves[i]+ "_" +
+							(Grafo.pesosProductos[Integer.parseInt(claves[i])][Integer.parseInt(vertice1.getClave())]+j), 
+								new Nodo(claves[i]));
 					// Se elimina el segundo vértice.
 					aristas.remove(vertice2.getClave()+"_"+j);
 				}
