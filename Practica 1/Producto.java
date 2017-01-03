@@ -1,7 +1,7 @@
 package Practica1;
 
 /**
- * Método que representa una abstracción de un producto de la tienda
+ * Clase que representa una abstracción de un producto de la tienda
  * de Amazon.
  */
 public class Producto {
