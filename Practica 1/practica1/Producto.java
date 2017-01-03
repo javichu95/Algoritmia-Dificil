@@ -1,4 +1,4 @@
-package Practica1;
+package practica1;
 
 /**
  * Clase que representa una abstracción de un producto de la tienda

@@ -1,4 +1,4 @@
-package Practica1;
+package practica1;
 
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -16,6 +16,80 @@ public class Amazon {
 	public static void main(String[] args) {
 		
 		comprobarArgumentos(args);		// Comprueba los argumentos de la llamada.
+		
+		if(args[0].equals("-alg")){		// Si es un ejemplo aleatorio...
+			switch(args[1]){
+			case "karger":
+				System.out.println("Ejemplo aleatorio con Karger:");
+				Grafo.emparejar(5,args[1]);		// Método que empareja los productos comprados juntos.
+				Grafo.mostrarGrafo();			// Se muestra el grafo.
+				Grafo.grafo = karger(Grafo.grafo,2);		// Método que resuelve el algoritmo de karger.
+				Grafo.mostrar();		// Se muestra el resultado final.
+				break;
+			case "karger_stein":
+				System.out.println("Ejemplo aleatorio con Karger-Stein:");
+				Grafo.emparejar(5,args[1]);		// Método que empareja los productos comprados juntos.
+				Grafo.mostrarGrafo();		// Se muestra el grafo.
+				Grafo.grafo = karger_stein(Grafo.grafo);		// Método que resuelve el algoritmo de karger_stein.
+				Grafo.mostrar();		// Método que muestra el resultado final.
+				break;
+			case "karger_steinPesos":
+				System.out.println("Ejemplo aleatorio con Karger-Stein con pesos:");
+				Grafo.emparejar(5,args[1]);		// Método que empareja los productos comprados juntos.
+				Grafo.mostrarGrafo();			// Se muestra el grafo.
+				Grafo.grafo = karger_steinPesos(Grafo.grafo);		// Método que resuelve el algoritmo de karger_stein con pesos.
+				Grafo.mostrar();		// Método que muestra el resultado final.
+				break;
+			case "kargerPesos":
+				System.out.println("Ejemplo aleatorio con Karger con pesos:");
+				Grafo.emparejar(5,args[1]);		// Método que empareja los productos comprados juntos.
+				Grafo.mostrarGrafo(); 		// Se muestra el grafo.
+				Grafo.grafo = kargerPesos(Grafo.grafo,2);		// Método que resuelve el algoritmo de karger con pesos.
+				Grafo.mostrar();		// Método que muestra el resultado final.
+				break;
+			default:			// Error con los argumentos
+				System.err.println("Usar para ejemplo random:");
+				System.err.println("java Amazon -alg [karger|karger_stein|"
+						+ "kargerPesos|karger_steinPesos]");
+				System.err.println("Usar para ejemplo:");
+				System.err.println("java Amazon -ejemplo [1|2|3|4]");
+				System.exit(0);
+			}
+		} else if(args[0].equals("-ejemplo")){		// Si es un ejemplo dado...
+			switch(args[1]){
+			case "1":
+				System.out.println("Ejemplo con Karger:");
+				Grafo.emparejar(1,null);		// Método que crea el ejemplo con los datos.
+				Grafo.mostrarGrafo(); 		// Se muestra el grafo.
+				Grafo.grafo = karger(Grafo.grafo,2);		// Método que resuelve el algoritmo de karger.
+				Grafo.mostrar();		// Método que muestra el resultado final.
+				break;
+			case "2":
+				System.out.println("Ejemplo con Karger-Stein:");
+				Grafo.emparejar(2,null);		// Método que crea el ejemplo con los datos.
+				Grafo.mostrarGrafo(); 		// Se muestra el grafo.
+				Grafo.grafo = karger_stein(Grafo.grafo);		// Método que resuelve el algoritmo de karger_stein.
+				Grafo.mostrar();		// Método que muestra el resultado final.
+				break;
+			case "3":
+				System.out.println("Ejemplo con Karger con pesos:");
+				Grafo.emparejar(3,null);		// Método que crea el ejemplo con los datos.
+				Grafo.mostrarGrafo(); 		// Se muestra el grafo.
+				Grafo.grafo = kargerPesos(Grafo.grafo,2);		// Método que resuelve el algoritmo de karger con pesos.
+				Grafo.mostrar();		// Método que muestra el resultado final.
+				break;
+			case "4":
+				System.out.println("Ejemplo con Karger-Stein con pesos");
+				Grafo.emparejar(4,null);		// Método que crea el ejemplo con los datos.
+				Grafo.mostrarGrafo(); 		// Se muestra el grafo.
+				Grafo.grafo = karger_steinPesos(Grafo.grafo);		// Método que resuelve el algoritmo de karger_stein con pesos.
+				Grafo.mostrar();		// Método que muestra el resultado final.
+				break;
+			default:		// Si no existe el caso de prueba...
+				System.err.println("No existe el caso de prueba " + args[1]);
+				System.exit(0);
+			}
+		}
 	}
 	
 	/*
@@ -31,81 +105,7 @@ public class Amazon {
 			System.err.println("Usar para ejemplo:");
 			System.err.println("java Amazon -ejemplo [1|2|3|4]");
 			System.exit(0);
-		} else{
-			if(args[0].equals("-alg")){		// Si es un ejemplo aleatorio...
-				switch(args[1]){
-				case "karger":
-					System.out.println("Ejemplo aleatorio con Karger:");
-					Grafo.emparejar(5,args[1]);		// Método que empareja los productos comprados juntos.
-					Grafo.mostrarGrafo();			// Se muestra el grafo.
-					Grafo.grafo = karger(Grafo.grafo,2);		// Método que resuelve el algoritmo de karger.
-					Grafo.mostrar();		// Se muestra el resultado final.
-					break;
-				case "karger_stein":
-					System.out.println("Ejemplo aleatorio con Karger-Stein:");
-					Grafo.emparejar(5,args[1]);		// Método que empareja los productos comprados juntos.
-					Grafo.mostrarGrafo();		// Se muestra el grafo.
-					Grafo.grafo = karger_stein(Grafo.grafo);		// Método que resuelve el algoritmo de karger_stein.
-					Grafo.mostrar();		// Método que muestra el resultado final.
-					break;
-				case "karger_steinPesos":
-					System.out.println("Ejemplo aleatorio con Karger-Stein con pesos:");
-					Grafo.emparejar(5,args[1]);		// Método que empareja los productos comprados juntos.
-					Grafo.mostrarGrafo();			// Se muestra el grafo.
-					Grafo.grafo = karger_steinPesos(Grafo.grafo);		// Método que resuelve el algoritmo de karger_stein con pesos.
-					Grafo.mostrar();		// Método que muestra el resultado final.
-					break;
-				case "kargerPesos":
-					System.out.println("Ejemplo aleatorio con Karger con pesos:");
-					Grafo.emparejar(5,args[1]);		// Método que empareja los productos comprados juntos.
-					Grafo.mostrarGrafo(); 		// Se muestra el grafo.
-					Grafo.grafo = kargerPesos(Grafo.grafo,2);		// Método que resuelve el algoritmo de karger con pesos.
-					Grafo.mostrar();		// Método que muestra el resultado final.
-					break;
-				default:			// Error con los argumentos
-					System.err.println("Usar para ejemplo random:");
-					System.err.println("java Amazon -alg [karger|karger_stein|"
-							+ "kargerPesos|karger_steinPesos]");
-					System.err.println("Usar para ejemplo:");
-					System.err.println("java Amazon -ejemplo [1|2|3|4]");
-					System.exit(0);
-				}
-			} else if(args[0].equals("-ejemplo")){		// Si es un ejemplo dado...
-				switch(args[1]){
-				case "1":
-					System.out.println("Ejemplo con Karger:");
-					Grafo.emparejar(1,null);		// Método que crea el ejemplo con los datos.
-					Grafo.mostrarGrafo(); 		// Se muestra el grafo.
-					Grafo.grafo = karger(Grafo.grafo,2);		// Método que resuelve el algoritmo de karger.
-					Grafo.mostrar();		// Método que muestra el resultado final.
-					break;
-				case "2":
-					System.out.println("Ejemplo con Karger-Stein:");
-					Grafo.emparejar(2,null);		// Método que crea el ejemplo con los datos.
-					Grafo.mostrarGrafo(); 		// Se muestra el grafo.
-					Grafo.grafo = karger_stein(Grafo.grafo);		// Método que resuelve el algoritmo de karger_stein.
-					Grafo.mostrar();		// Método que muestra el resultado final.
-					break;
-				case "3":
-					System.out.println("Ejemplo con Karger con pesos:");
-					Grafo.emparejar(3,null);		// Método que crea el ejemplo con los datos.
-					Grafo.mostrarGrafo(); 		// Se muestra el grafo.
-					Grafo.grafo = kargerPesos(Grafo.grafo,2);		// Método que resuelve el algoritmo de karger con pesos.
-					Grafo.mostrar();		// Método que muestra el resultado final.
-					break;
-				case "4":
-					System.out.println("Ejemplo con Karger-Stein con pesos");
-					Grafo.emparejar(4,null);		// Método que crea el ejemplo con los datos.
-					Grafo.mostrarGrafo(); 		// Se muestra el grafo.
-					Grafo.grafo = karger_steinPesos(Grafo.grafo);		// Método que resuelve el algoritmo de karger_stein con pesos.
-					Grafo.mostrar();		// Método que muestra el resultado final.
-					break;
-				default:		// Si no existe el caso de prueba...
-					System.err.println("No existe el caso de prueba " + args[1]);
-					System.exit(0);
-				}
-			}
-		}
+		} 
 	}
 	
 	/*
