@@ -6,15 +6,17 @@ package practica2;
  */
 public class NodoArbol {
 
-	private char elemento;		// Elemento del nodo.
+	private String elemento;		// Elemento del nodo.
 	private NodoArbol primogenito;	// Primogénito del nodo.
 	private NodoArbol sigHermano;	// Siguiente hermano del nodo.
+	private NodoArbol antHermano;	// Anterior hermano del nodo.
+	private NodoArbol padre;	// Padre del nodo.
 	private int etiqueta;	// Etiqueta del nodo.
 	
 	/*
 	 * Método constructor del nodo de con el elemento.
 	 */
-	public NodoArbol(char elemento){
+	public NodoArbol(String elemento){
 		
 		this.elemento = elemento;
 		primogenito = null;
@@ -26,7 +28,7 @@ public class NodoArbol {
 	 * Método constructor de un nodo con el elemento, primogénito y siguiente
 	 * hermano.
 	 */
-	public NodoArbol(char elemento, NodoArbol prim, NodoArbol sigHer){
+	public NodoArbol(String elemento, NodoArbol prim, NodoArbol sigHer){
 		
 		this.elemento = elemento;
 		primogenito = prim;
@@ -37,7 +39,7 @@ public class NodoArbol {
 	/*
 	 * Método que fija el elemento del nodo.
 	 */
-	public void setElemento(char elemento){
+	public void setElemento(String elemento){
 		
 		this.elemento = elemento;
 	}
@@ -45,7 +47,7 @@ public class NodoArbol {
 	/*
 	 * Método que devuelve el elemento del nodo.
 	 */
-	public char getElemento(){
+	public String getElemento(){
 		
 		return elemento;
 	}
@@ -80,6 +82,38 @@ public class NodoArbol {
 	public NodoArbol getSigHermano(){
 		
 		return sigHermano;
+	}
+	
+	/*
+	 * Método que fija el siguiente hermano del nodo.
+	 */
+	public void setAntHermano(NodoArbol hermano){
+		
+		antHermano = hermano;
+	}
+	
+	/*
+	 * Método que devuelve el siguiente hermano del nodo.
+	 */
+	public NodoArbol getAntHermano(){
+		
+		return antHermano;
+	}
+	
+	/*
+	 * Método que fija el padre del nodo.
+	 */
+	public void setPadre(NodoArbol padre){
+		
+		this.padre = padre;
+	}
+	
+	/*
+	 * Método que devuelve el padre del nodo.
+	 */
+	public NodoArbol getPadre(){
+		
+		return padre;
 	}
 	
 	/*

@@ -17,7 +17,7 @@ public class ArbolSufijos {
 	 */
 	public ArbolSufijos(String texto){
 		
-		raiz = new NodoArbol('r');		// Se crea el nodo de la raíz.
+		raiz = new NodoArbol("r");		// Se crea el nodo de la raíz.
 		this.texto = texto+"$";		// Se añade el texto del árbol.
 	}
 	
@@ -43,12 +43,13 @@ public class ArbolSufijos {
 			
 			for(int i=0; i<cadena.length(); i++){	// Se recorre el sufijo.
 				// Se crea el nodo a introducir.
-				NodoArbol introducir = new NodoArbol(cadena.charAt(i));
+				NodoArbol introducir = new NodoArbol(cadena.substring(i,i+1));
 				if(i==cadena.length()-1){		// Si es hoja, se pone etiqueta.
 					introducir.setEtiqueta(obtenerEtiqueta());
 				}
 				// Se introduce en el árbol.
 				actual.setPrimogenito(introducir);
+				introducir.setPadre(actual);
 				actual = introducir;
 			}
 			
@@ -57,7 +58,7 @@ public class ArbolSufijos {
 			
 			for(int i=0; i<cadena.length(); i++){		// Se recorre el sufijo.
 				NodoArbol hijo = actual.getPrimogenito();	// Se obtiene el primogénito.
-				char caracter = cadena.charAt(i);	// Se obtiene el caracter.
+				String caracter = cadena.substring(i,i+1);	// Se obtiene el caracter.
 				// Se crea el nodo a introducir.
 				NodoArbol introducir = new NodoArbol(caracter);
 				if(i==cadena.length()-1){		// Si es hoja, se pone etiqueta.
@@ -75,12 +76,15 @@ public class ArbolSufijos {
 					}
 					if(siguiente == null){		// Si no está, se introduce.
 						hijo.setSigHermano(introducir);
+						introducir.setPadre(actual);
+						introducir.setAntHermano(hijo);
 						actual = hijo.getSigHermano();
 					} else{			// Si está, se pasa al siguiente.
 						actual = hijo.getSigHermano();
 					}
 				} else if(hijo == null){		// Si no tenía hijos, se introduce.
 					actual.setPrimogenito(introducir);
+					introducir.setPadre(actual);
 					actual = actual.getPrimogenito();
 				} else{		// Si el hijo es el elemento, se pasa al siguiente.
 					actual = actual.getPrimogenito();
@@ -97,11 +101,11 @@ public class ArbolSufijos {
 	public void compactar(){
 		
 		// Lista para los elementos con dos hijos.
-		ArrayList<NodoArbol> dosHijos = new ArrayList<NodoArbol>();
+		ArrayList<NodoArbol> unHijo = new ArrayList<NodoArbol>();
 		// Lista para todos los elementos.
 		ArrayList<NodoArbol> elementos = obtenerElementos();
 		
-		for(int i=0; i<elementos.size(); i++){		// Se recorren buscando dos hijos...
+		for(int i=0; i<elementos.size(); i++){		// Se recorren buscando un hijo...
 			NodoArbol actual = elementos.get(i);	// Se obtiene el elemento actual.
 			NodoArbol hijo = actual.getPrimogenito();	// Se obtiene el primer hijo.
 			int numHijos = 0;		// Número de hijos.
@@ -109,18 +113,39 @@ public class ArbolSufijos {
 				numHijos++;
 				hijo = hijo.getSigHermano();
 			}
-			if(numHijos == 2){		// Si tiene dos hijos se añade a la lista.
-				dosHijos.add(actual);
+			if(numHijos == 1){		// Si tiene un hijo se añade a la lista.
+				unHijo.add(actual);
 			}
 		}
 		
-		while(!dosHijos.isEmpty()){
+		for(int i = 0; i < unHijo.size(); i++){
+			NodoArbol borrar = unHijo.get(i);			//Nodo a borrar.
+			NodoArbol hijo = borrar.getPrimogenito();	//Hijo del nodo.
+			hijo.setElemento(borrar.getElemento()+hijo.getElemento()); 	//Se juntan ambas etiquetas.
+			NodoArbol padre = borrar.getPadre();			//Padre del nodo a borrar.
+			//Se borra el nodo.
+			hijo.setPadre(padre);
+			
+			//Se comprueban los hermanos del nodo a borrar.
+			NodoArbol hermano = borrar.getAntHermano();
+			if(hermano!=null) {
+				hermano.setSigHermano(hijo);
+				hijo.setAntHermano(hermano);
+			} else {
+				padre.setPrimogenito(hijo);
+			}
+			hermano = borrar.getSigHermano();
+			if(hermano!=null) {
+				hermano.setAntHermano(hijo);
+				hijo.setSigHermano(hermano);
+			}
+		}
+
+		// Lista para todos los elementos.
+		elementos = obtenerElementos();
+		for(int i=0; i<elementos.size(); i++){
 			
 		}
-		
-		/*for(int i=0; i<dosHijos.size(); i++){
-			System.out.println(dosHijos.get(i).getElemento());
-		}*/
 	}
 	
 	/*
