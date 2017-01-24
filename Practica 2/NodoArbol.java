@@ -12,6 +12,7 @@ public class NodoArbol {
 	private NodoArbol antHermano;	// Anterior hermano del nodo.
 	private NodoArbol padre;	// Padre del nodo.
 	private int etiqueta;	// Etiqueta del nodo.
+	private int enlace;
 	
 	/*
 	 * Método constructor del nodo de con el elemento.
@@ -22,6 +23,7 @@ public class NodoArbol {
 		primogenito = null;
 		sigHermano = null;
 		etiqueta = -1;
+		enlace=-1;
 	}
 	
 	/*
@@ -130,5 +132,21 @@ public class NodoArbol {
 	public int getEtiqueta(){
 		
 		return etiqueta;
+	}
+	
+	/*
+	 * Método que fija el enlace del nodo.
+	 */
+	public void setEnlace(int enlace){
+		
+		this.enlace = enlace;
+	}
+	
+	/*
+	 * Método que devuelve el enlace del nodo.
+	 */
+	public int getEnlace(){
+		
+		return enlace;
 	}
 }

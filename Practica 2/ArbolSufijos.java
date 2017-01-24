@@ -11,6 +11,8 @@ public class ArbolSufijos {
 	private NodoArbol raiz = null;		// Nodo raíz del árbol.
 	private String texto = null;		// Texto del árbol.
 	private int etiqueta = 1;		// Etiqueta de inicial para las hojas.
+	private ArrayList<NodoArbol> hojas;
+	private final int K = 3;
 	
 	/*
 	 * Método constructor del árbol de sufijos.
@@ -19,6 +21,7 @@ public class ArbolSufijos {
 		
 		raiz = new NodoArbol("r");		// Se crea el nodo de la raíz.
 		this.texto = texto+"$";		// Se añade el texto del árbol.
+		hojas = new ArrayList<NodoArbol>();
 	}
 	
 	/*
@@ -46,6 +49,7 @@ public class ArbolSufijos {
 				NodoArbol introducir = new NodoArbol(cadena.substring(i,i+1));
 				if(i==cadena.length()-1){		// Si es hoja, se pone etiqueta.
 					introducir.setEtiqueta(obtenerEtiqueta());
+					hojas.add(introducir);
 				}
 				// Se introduce en el árbol.
 				actual.setPrimogenito(introducir);
@@ -63,6 +67,7 @@ public class ArbolSufijos {
 				NodoArbol introducir = new NodoArbol(caracter);
 				if(i==cadena.length()-1){		// Si es hoja, se pone etiqueta.
 					introducir.setEtiqueta(obtenerEtiqueta());
+					hojas.add(introducir);
 				}
 				
 				// Se localiza la posición en el árbol.
@@ -144,7 +149,18 @@ public class ArbolSufijos {
 		// Lista para todos los elementos.
 		elementos = obtenerElementos();
 		for(int i=0; i<elementos.size(); i++){
-			
+			NodoArbol actual = elementos.get(i);
+			if(actual.getElemento().length() > K) {		//Si el nodo tiene un texto de tamaño superior a K.
+				for(int j = 0; j < hojas.size(); j++) {
+					NodoArbol hojaActual = hojas.get(j);
+					String texto = getTexto(hojaActual);
+					if(actual.getElemento().equals(texto)) {		//Si el texto de la hoja es igual se enlazan.
+						actual.setEnlace(j);
+						actual.setElemento("");
+						break;
+					}
+				}
+			}
 		}
 	}
 	
@@ -205,5 +221,25 @@ public class ArbolSufijos {
 		
 		etiqueta++;
 		return etiqueta-1;
+	}
+	
+	
+	/*
+	 * Se obtiene el texto contenido desde el nodo hasta la raiz.
+	 */
+	private String getTexto(NodoArbol nodo) {
+		if(nodo.getPadre() != null) {		//Si no es la raiz.
+			String texto = "";
+			//Se obtiene el texto contenido en el nodo.
+			if(nodo.getEtiqueta() > -1) {
+				texto = getTexto(hojas.get(nodo.getEnlace()-1));
+			} else {
+				texto = nodo.getElemento();
+			}
+			//Se devuelve el texto obtenido concatenado con el del padre.
+			return getTexto(nodo.getPadre())+texto;
+		} else {
+			return "";		//Si es la raiz se devuelve cadena vacia.
+		}
 	}
 }
