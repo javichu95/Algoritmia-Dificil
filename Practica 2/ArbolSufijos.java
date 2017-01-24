@@ -20,7 +20,7 @@ public class ArbolSufijos {
 	public ArbolSufijos(String texto){
 		
 		raiz = new NodoArbol("r");		// Se crea el nodo de la raíz.
-		this.texto = texto+"$";		// Se añade el texto del árbol.
+		this.texto = texto;		// Se añade el texto del árbol.
 		hojas = new ArrayList<NodoArbol>();
 	}
 	
@@ -49,6 +49,7 @@ public class ArbolSufijos {
 				NodoArbol introducir = new NodoArbol(cadena.substring(i,i+1));
 				if(i==cadena.length()-1){		// Si es hoja, se pone etiqueta.
 					introducir.setEtiqueta(obtenerEtiqueta());
+					introducir.setCamino(cadena);
 					hojas.add(introducir);
 				}
 				// Se introduce en el árbol.
@@ -67,15 +68,16 @@ public class ArbolSufijos {
 				NodoArbol introducir = new NodoArbol(caracter);
 				if(i==cadena.length()-1){		// Si es hoja, se pone etiqueta.
 					introducir.setEtiqueta(obtenerEtiqueta());
+					introducir.setCamino(cadena);
 					hojas.add(introducir);
 				}
 				
 				// Se localiza la posición en el árbol.
-				if(hijo != null && hijo.getElemento() != caracter){
+				if(hijo != null && !hijo.getElemento().equals(caracter)){
 					NodoArbol siguiente = hijo.getSigHermano();
 					// Se recorren los hermanos hasta encontrarlo si está.
 					while(siguiente != null
-							&& siguiente.getElemento() != caracter){
+							&& !siguiente.getElemento().equals(caracter)){
 						hijo = siguiente;
 						siguiente = siguiente.getSigHermano();
 					}
@@ -146,18 +148,17 @@ public class ArbolSufijos {
 			}
 		}
 
-		// Lista para todos los elementos.
-		elementos = obtenerElementos();
-		for(int i=0; i<elementos.size(); i++){
-			NodoArbol actual = elementos.get(i);
+		for(int i=0; i<hojas.size(); i++){
+			NodoArbol actual = hojas.get(i);
 			if(actual.getElemento().length() > K) {		//Si el nodo tiene un texto de tamaño superior a K.
 				for(int j = 0; j < hojas.size(); j++) {
 					NodoArbol hojaActual = hojas.get(j);
-					String texto = getTexto(hojaActual);
-					if(actual.getElemento().equals(texto)) {		//Si el texto de la hoja es igual se enlazan.
-						actual.setEnlace(j);
-						actual.setElemento("");
-						break;
+					if(hojaActual.getEtiqueta() != actual.getEtiqueta()) {
+						if(actual.getElemento().equals(hojaActual.getCamino())) {		//Si el texto de la hoja es igual se enlazan.
+							actual.setEnlace(j);
+							actual.setElemento("");
+							break;
+						}
 					}
 				}
 			}
@@ -195,12 +196,16 @@ public class ArbolSufijos {
 	public void mostrarArbol(){
 		
 		// Crea la cola.
-		LinkedList<NodoArbol> cola = new LinkedList<NodoArbol>();
+		/*LinkedList<NodoArbol> cola = new LinkedList<NodoArbol>();
 		cola.addFirst(raiz);		// Añade la raíz.
 		while(!cola.isEmpty()){		// Mientras la cola tenga elementos...
 			// Se obtiene el primer elemento y se muestra.
 			NodoArbol nodo = cola.removeLast();
-			System.out.print(nodo.getElemento());
+			if(nodo.getEnlace() > -1) {
+				System.out.print(nodo.getEnlace()+1);
+			} else {
+				System.out.print(nodo.getElemento());
+			}
 			if(nodo.getEtiqueta() != -1){		// Si es una hoja, se muestra etiqueta.
 				System.out.print(" " + nodo.getEtiqueta());
 			}
@@ -211,6 +216,9 @@ public class ArbolSufijos {
 				cola.addFirst(nodo);
 				nodo = nodo.getSigHermano();
 			}
+		}*/
+		for(int i = 0; i<hojas.size(); i++) {
+			System.out.println(getTexto(hojas.get(i))+" "+(hojas.get(i).getEtiqueta()));
 		}
 	}
 	
@@ -231,8 +239,8 @@ public class ArbolSufijos {
 		if(nodo.getPadre() != null) {		//Si no es la raiz.
 			String texto = "";
 			//Se obtiene el texto contenido en el nodo.
-			if(nodo.getEtiqueta() > -1) {
-				texto = getTexto(hojas.get(nodo.getEnlace()-1));
+			if(nodo.getEnlace() > -1) {
+				texto = texto+" "+(nodo.getEnlace()+1); //getTexto(hojas.get(nodo.getEnlace()));
 			} else {
 				texto = nodo.getElemento();
 			}

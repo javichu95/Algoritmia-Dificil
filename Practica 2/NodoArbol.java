@@ -13,6 +13,7 @@ public class NodoArbol {
 	private NodoArbol padre;	// Padre del nodo.
 	private int etiqueta;	// Etiqueta del nodo.
 	private int enlace;
+	private String camino;	//Camino de raiz a nodo.
 	
 	/*
 	 * Método constructor del nodo de con el elemento.
@@ -22,6 +23,8 @@ public class NodoArbol {
 		this.elemento = elemento;
 		primogenito = null;
 		sigHermano = null;
+		antHermano = null;
+		padre = null;
 		etiqueta = -1;
 		enlace=-1;
 	}
@@ -35,7 +38,10 @@ public class NodoArbol {
 		this.elemento = elemento;
 		primogenito = prim;
 		sigHermano = sigHer;
+		antHermano = null;
+		padre = null;
 		etiqueta = -1;
+		enlace=-1;
 	}
 	
 	/*
@@ -148,5 +154,21 @@ public class NodoArbol {
 	public int getEnlace(){
 		
 		return enlace;
+	}
+	
+	/*
+	 * Método que fija el camino de la raiz al nodo.
+	 */
+	public void setCamino(String camino){
+		
+		this.camino = camino;
+	}
+	
+	/*
+	 * Método que devuelve el camino de la raiz al nodo.
+	 */
+	public String getCamino(){
+		
+		return camino;
 	}
 }
