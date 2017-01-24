@@ -12,8 +12,8 @@ public class NodoArbol {
 	private NodoArbol antHermano;	// Anterior hermano del nodo.
 	private NodoArbol padre;	// Padre del nodo.
 	private int etiqueta;	// Etiqueta del nodo.
-	private int enlace;
-	private String camino;	//Camino de raiz a nodo.
+	private int enlace;		// Enlace con la hoja del árbol.
+	private String camino;	// Camino de raiz a nodo hoja.
 	
 	/*
 	 * Método constructor del nodo de con el elemento.
@@ -26,7 +26,7 @@ public class NodoArbol {
 		antHermano = null;
 		padre = null;
 		etiqueta = -1;
-		enlace=-1;
+		enlace = -1;
 	}
 	
 	/*
@@ -41,7 +41,7 @@ public class NodoArbol {
 		antHermano = null;
 		padre = null;
 		etiqueta = -1;
-		enlace=-1;
+		enlace = -1;
 	}
 	
 	/*
@@ -157,7 +157,7 @@ public class NodoArbol {
 	}
 	
 	/*
-	 * Método que fija el camino de la raiz al nodo.
+	 * Método que fija el camino de la raíz al nodo.
 	 */
 	public void setCamino(String camino){
 		
@@ -165,7 +165,7 @@ public class NodoArbol {
 	}
 	
 	/*
-	 * Método que devuelve el camino de la raiz al nodo.
+	 * Método que devuelve el camino de la raíz al nodo.
 	 */
 	public String getCamino(){
 		

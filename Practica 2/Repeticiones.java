@@ -11,6 +11,7 @@ public class Repeticiones {
 		System.out.println();
 		System.out.println();
 		arbol.compactar();
+		arbol.mostrarEtiqHojas();
 	}
 	
 }

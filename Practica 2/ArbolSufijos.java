@@ -11,8 +11,8 @@ public class ArbolSufijos {
 	private NodoArbol raiz = null;		// Nodo raíz del árbol.
 	private String texto = null;		// Texto del árbol.
 	private int etiqueta = 1;		// Etiqueta de inicial para las hojas.
-	private ArrayList<NodoArbol> hojas;
-	private final int K = 3;
+	private ArrayList<NodoArbol> hojas;	// Lista de las hojas del árbol.
+	private final int K = 3;		// Tamaño máximo del camino a reducir.
 	
 	/*
 	 * Método constructor del árbol de sufijos.
@@ -21,7 +21,7 @@ public class ArbolSufijos {
 		
 		raiz = new NodoArbol("r");		// Se crea el nodo de la raíz.
 		this.texto = texto;		// Se añade el texto del árbol.
-		hojas = new ArrayList<NodoArbol>();
+		hojas = new ArrayList<NodoArbol>();		// Crea la lista de hojas.
 	}
 	
 	/*
@@ -107,7 +107,7 @@ public class ArbolSufijos {
 	 */
 	public void compactar(){
 		
-		// Lista para los elementos con dos hijos.
+		// Lista para los elementos con un hijo.
 		ArrayList<NodoArbol> unHijo = new ArrayList<NodoArbol>();
 		// Lista para todos los elementos.
 		ArrayList<NodoArbol> elementos = obtenerElementos();
@@ -126,35 +126,41 @@ public class ArbolSufijos {
 		}
 		
 		for(int i = 0; i < unHijo.size(); i++){
-			NodoArbol borrar = unHijo.get(i);			//Nodo a borrar.
-			NodoArbol hijo = borrar.getPrimogenito();	//Hijo del nodo.
-			hijo.setElemento(borrar.getElemento()+hijo.getElemento()); 	//Se juntan ambas etiquetas.
-			NodoArbol padre = borrar.getPadre();			//Padre del nodo a borrar.
-			//Se borra el nodo.
+			NodoArbol borrar = unHijo.get(i);			// Nodo a borrar.
+			NodoArbol hijo = borrar.getPrimogenito();	// Hijo del nodo.
+			hijo.setElemento(borrar.getElemento()+hijo.getElemento()); 	// Se juntan ambas etiquetas.
+			NodoArbol padre = borrar.getPadre();			// Padre del nodo a borrar.
+			// Se borra el nodo.
 			hijo.setPadre(padre);
 			
-			//Se comprueban los hermanos del nodo a borrar.
+			// Se comprueban los hermanos del nodo a borrar.
 			NodoArbol hermano = borrar.getAntHermano();
-			if(hermano!=null) {
+			if(hermano!=null) {		// Si tiene hermano anterior, se ajustan.
 				hermano.setSigHermano(hijo);
 				hijo.setAntHermano(hermano);
-			} else {
+			} else {		// Sino se fija como primogénito.
 				padre.setPrimogenito(hijo);
 			}
 			hermano = borrar.getSigHermano();
-			if(hermano!=null) {
+			if(hermano!=null) {		// Se fija el siguiente hermano.
 				hermano.setAntHermano(hijo);
 				hijo.setSigHermano(hermano);
 			}
 		}
+		
+		mostrarArbol();
+		System.out.println();
+		System.out.println();
 
-		for(int i=0; i<hojas.size(); i++){
-			NodoArbol actual = hojas.get(i);
-			if(actual.getElemento().length() > K) {		//Si el nodo tiene un texto de tamaño superior a K.
-				for(int j = 0; j < hojas.size(); j++) {
-					NodoArbol hojaActual = hojas.get(j);
+		for(int i=0; i<hojas.size(); i++){		// Se recorren todas las hojas.
+			NodoArbol actual = hojas.get(i);	// Se obtiene la hoja actual.
+			if(actual.getElemento().length() > K) {		// Si el nodo tiene un texto de tamaño superior a K...
+				for(int j = 0; j < hojas.size(); j++) {		// Se recorren las hojas para encontrar el camino.
+					NodoArbol hojaActual = hojas.get(j);	// Se obtiene la hoja actual.
+					// Si los dos nodos a comparar son distintos...
 					if(hojaActual.getEtiqueta() != actual.getEtiqueta()) {
-						if(actual.getElemento().equals(hojaActual.getCamino())) {		//Si el texto de la hoja es igual se enlazan.
+						// Si el texto de la hoja es igual se enlazan.
+						if(actual.getElemento().equals(hojaActual.getCamino())) {		
 							actual.setEnlace(j);
 							actual.setElemento("");
 							break;
@@ -196,7 +202,7 @@ public class ArbolSufijos {
 	public void mostrarArbol(){
 		
 		// Crea la cola.
-		/*LinkedList<NodoArbol> cola = new LinkedList<NodoArbol>();
+		LinkedList<NodoArbol> cola = new LinkedList<NodoArbol>();
 		cola.addFirst(raiz);		// Añade la raíz.
 		while(!cola.isEmpty()){		// Mientras la cola tenga elementos...
 			// Se obtiene el primer elemento y se muestra.
@@ -216,8 +222,15 @@ public class ArbolSufijos {
 				cola.addFirst(nodo);
 				nodo = nodo.getSigHermano();
 			}
-		}*/
-		for(int i = 0; i<hojas.size(); i++) {
+		}
+	}
+	
+	/*
+	 * Método que muestra el árbol con las etiquetas.
+	 */
+	public void mostrarEtiqHojas(){
+		
+		for(int i = 0; i<hojas.size(); i++) {		// Recorre las hojas y las muestra.
 			System.out.println(getTexto(hojas.get(i))+" "+(hojas.get(i).getEtiqueta()));
 		}
 	}
@@ -233,21 +246,21 @@ public class ArbolSufijos {
 	
 	
 	/*
-	 * Se obtiene el texto contenido desde el nodo hasta la raiz.
+	 * Se obtiene el texto contenido desde el nodo hasta la raíz.
 	 */
 	private String getTexto(NodoArbol nodo) {
-		if(nodo.getPadre() != null) {		//Si no es la raiz.
+		if(nodo.getPadre() != null) {		// Si no es la raiz.
 			String texto = "";
-			//Se obtiene el texto contenido en el nodo.
+			// Se obtiene el texto contenido en el nodo.
 			if(nodo.getEnlace() > -1) {
-				texto = texto+" "+(nodo.getEnlace()+1); //getTexto(hojas.get(nodo.getEnlace()));
+				texto = texto+" "+(nodo.getEnlace()+1);
 			} else {
 				texto = nodo.getElemento();
 			}
-			//Se devuelve el texto obtenido concatenado con el del padre.
+			// Se devuelve el texto obtenido concatenado con el del padre.
 			return getTexto(nodo.getPadre())+texto;
 		} else {
-			return "";		//Si es la raiz se devuelve cadena vacia.
+			return "";		// Si es la raíz, se devuelve cadena vacía.
 		}
 	}
 }
