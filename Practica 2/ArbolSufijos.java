@@ -148,9 +148,9 @@ public class ArbolSufijos {
 			}
 		}
 		
-		mostrarArbol();
+		/*mostrarArbol();
 		System.out.println();
-		System.out.println();
+		System.out.println();*/
 
 		for(int i=0; i<hojas.size(); i++){		// Se recorren todas las hojas.
 			NodoArbol actual = hojas.get(i);	// Se obtiene la hoja actual.
@@ -262,5 +262,31 @@ public class ArbolSufijos {
 		} else {
 			return "";		// Si es la raíz, se devuelve cadena vacía.
 		}
+	}
+	
+	/*
+	 * Obtiene la mayor repeticion del texto.
+	 */
+	public String mayorRepeticion() {
+		String repetido = "";
+		for(int k = 0; k < hojas.size();k++) {	//Bucle para cada rama del arbol.
+			for(int i = 0; i < hojas.get(k).getCamino().length() && hojas.get(k).getCamino().length()>repetido.length(); i++) {
+				//Cada vez se comprueba una parte del texto.
+				String subTexto = hojas.get(k).getCamino().substring(0,i+1);
+				for(int j = 0; j < hojas.size(); j++) {
+					if(j!=k) {
+						//Para las otras ramas se comprueba si el texto coincide.
+						if(subTexto.length() <= hojas.get(j).getCamino().length()) {
+							String cadena = hojas.get(j).getCamino().substring(0,subTexto.length());
+							if(cadena.equals(subTexto) && cadena.length() > repetido.length()) {
+								repetido = cadena;
+							}
+						}
+					}
+				}
+			}
+		}
+		return repetido;
+		
 	}
 }
