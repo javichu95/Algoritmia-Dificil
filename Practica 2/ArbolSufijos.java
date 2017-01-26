@@ -19,7 +19,8 @@ public class ArbolSufijos {
 	 */
 	public ArbolSufijos(String texto){
 		
-		raiz = new NodoArbol("r");		// Se crea el nodo de la raíz.
+		raiz = new NodoArbol("r"
+				+ "$");		// Se crea el nodo de la raíz.
 		this.texto = texto;		// Se añade el texto del árbol.
 		hojas = new ArrayList<NodoArbol>();		// Crea la lista de hojas.
 	}
@@ -295,30 +296,36 @@ public class ArbolSufijos {
 	/*
 	 * Obtiene las repeticiones maximales del texto.
 	 */
-	public ArrayList<String> maximalRepeticion() {
-		
-		ArrayList <String> repetidos = new ArrayList<String>();
-		String repetido = "";
-		for(int k = 0; k < hojas.size();k++) {	// Bucle para cada rama del arbol.
-			for(int i = 0; i < hojas.get(k).getCamino().length() 
-					&& hojas.get(k).getCamino().length() > repetido.length(); i++) {
-				// Cada vez se comprueba una parte del texto.
-				String subTexto = hojas.get(k).getCamino().substring(0,i+1);
-				for(int j = 0; j < hojas.size(); j++) {
-					if(j!=k) {
-						// Para las otras ramas se comprueba si el texto coincide.
-						if(subTexto.length() <= hojas.get(j).getCamino().length()) {
-							String cadena = hojas.get(j).getCamino().substring(0,subTexto.length());
-							if(cadena.equals(subTexto) && cadena.length() > repetido.length()) {
-								repetidos.add(cadena);
-								repetido = cadena;
-							}
-						}
-					}
-				}
-			}
+	public ArrayList<String> maximales() {
+		ArrayList<String> maximal = new ArrayList<String>();
+		return maximales(maximal,raiz.getPrimogenito(),"");	
+	}
+	
+	/*
+	 * Obtiene las repeticiones maximales del texto.
+	 */
+	private ArrayList<String> maximales(ArrayList<String> maximal, NodoArbol nodo, String acumulado) {
+		if(nodo == null) {
+			return maximal;
 		}
-		
-		return repetidos;		
+		maximal = maximales(maximal, nodo.getSigHermano(),acumulado);
+		acumulado = acumulado + nodo.getElemento();
+		int hijos = numHijos(nodo);
+		if (hijos > 1) {		//Si hay mas de un hijo es un maximal.
+			if(!maximal.contains(acumulado)) {
+				maximal.add(acumulado);
+			}
+		} 
+		return maximales(maximal,nodo.getPrimogenito(),acumulado);
+	}
+	
+	private int numHijos(NodoArbol nodo) {
+		NodoArbol hijo = nodo.getPrimogenito();
+		int hijos = 0;
+		while(hijo != null) {
+			hijos++;
+			hijo = hijo.getSigHermano();
+		}
+		return hijos;
 	}
 }

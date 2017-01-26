@@ -2,6 +2,7 @@ package practica2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Repeticiones {
@@ -16,10 +17,16 @@ public class Repeticiones {
 			scan.nextLine();
 			while(scan.hasNextLine()) {
 				cadena = leerFichero(scan);*/
+				cadena = cadena +"$";
 				arbol = new ArbolSufijos(cadena);
 				arbol.crearArbol();
 				arbol.compactar();
-				System.out.println(arbol.mayorRepeticion());
+				System.out.println("Mayor repeticion: "+arbol.mayorRepeticion());
+				ArrayList<String> maximales = arbol.maximales();
+				System.out.println("Maximales: ");
+				for(int i = 0; i < maximales.size(); i++) {
+					System.out.println(maximales.get(i));
+				}
 			/*}
 			scan.close();
 		} catch(FileNotFoundException e) {
