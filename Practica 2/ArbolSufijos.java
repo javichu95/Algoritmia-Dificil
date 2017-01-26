@@ -21,7 +21,7 @@ public class ArbolSufijos {
 		
 		raiz = new NodoArbol("r"
 				+ "$");		// Se crea el nodo de la raíz.
-		this.texto = texto;		// Se añade el texto del árbol.
+		this.texto = texto + "$";		// Se añade el texto del árbol.
 		hojas = new ArrayList<NodoArbol>();		// Crea la lista de hojas.
 	}
 	
@@ -297,6 +297,7 @@ public class ArbolSufijos {
 		
 		// Lista para las cadenas maximales.
 		ArrayList<String> maximal = new ArrayList<String>();
+		obtenerSimbolosIzquierdos();
 		// Devuelve la lista con las cadenas.
 		return maximales(maximal,raiz.getPrimogenito(),"");	
 	}
@@ -306,33 +307,49 @@ public class ArbolSufijos {
 	 */
 	private ArrayList<String> maximales(ArrayList<String> maximal, NodoArbol nodo, String acumulado) {
 		
+		
 		if(nodo == null) {	// Si no hay más nodos, se devuelve la lista.
 			return maximal;
 		}
 		
 		maximal = maximales(maximal, nodo.getSigHermano(),acumulado);
 		acumulado = acumulado + nodo.getElemento();	// Camino acumulado.
-		int hijos = numHijos(nodo);		// Número de hijos.
-		if (hijos > 1) {		// Si hay más de un hijo es un maximal.
+		if (nodo.isLeftDiverse()) {		// Si hay más de un hijo es un maximal.
 			if(!maximal.contains(acumulado)) {
 				maximal.add(acumulado);
-			}
-		} 
-		
+			} 
+		} else {
+			return maximal;
+		}
 		return maximales(maximal,nodo.getPrimogenito(),acumulado);
 	}
 	
 	/*
-	 * Método que devuelve el número de hijos de un nodo.
+	 * Obtiene los simbolos izquierdos de las hojas.
 	 */
-	private int numHijos(NodoArbol nodo) {
-		
-		NodoArbol hijo = nodo.getPrimogenito();		// Obtiene el primogénito.
-		int hijos = 0;		// Variable para el número de hijos.
-		while(hijo != null) {		// Mientras haya hijos...
-			hijos++;		// Se aumenta la variable.
-			hijo = hijo.getSigHermano();
+	private void obtenerSimbolosIzquierdos() {
+		for(int i = 0; i < hojas.size(); i++) {
+			NodoArbol etiquetar = hojas.get(i);
+			for(int j = 0; j < hojas.size(); j++) {
+				if(i != j) {
+					//Se comprueba si la hoja esta unida a la otra hoja.
+					if(hojas.get(j).getEnlace() == i) {
+						//Se obtiene el simbolo izquierdo.
+						String simbolo = hojas.get(j).getPadre().getElemento();
+						etiquetar.setSimboloIzdo(simbolo);
+						NodoArbol padre = etiquetar.getPadre();
+						//Se etiqueta a todos los antecesores hasta la raiz.
+						while(!padre.getElemento().equals("r$")) {
+							if(padre.getSimboloIzdo() != null && !padre.getSimboloIzdo().equals(simbolo)) {
+								padre.setLeftDiverse(true);		//Indica que tiene dos hojas con dos simbolos izquierdos distintos.
+							} else {
+								padre.setSimboloIzdo(simbolo);		//Asigna un simbolo.
+							}
+							padre = padre.getPadre();
+						}
+					}
+				}
+			}
 		}
-		return hijos;		// Se devuelve el número de hijos.
 	}
 }

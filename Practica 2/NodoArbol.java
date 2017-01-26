@@ -14,7 +14,9 @@ public class NodoArbol {
 	private int etiqueta;	// Etiqueta del nodo.
 	private int enlace;		// Enlace con la hoja del árbol.
 	private String camino;	// Camino de raiz a nodo hoja.
-	
+	private boolean leftDiverse; //Indica si es left-diverse.
+	private String simboloIzdo;	//Simbolo izquierdo de una hoja.
+
 	/*
 	 * Método constructor del nodo de con el elemento.
 	 */
@@ -27,6 +29,8 @@ public class NodoArbol {
 		padre = null;
 		etiqueta = -1;
 		enlace = -1;
+		simboloIzdo = null;
+		leftDiverse = false;
 	}
 	
 	/*
@@ -42,6 +46,8 @@ public class NodoArbol {
 		padre = null;
 		etiqueta = -1;
 		enlace = -1;
+		simboloIzdo = null;
+		leftDiverse = false;
 	}
 	
 	/*
@@ -170,5 +176,34 @@ public class NodoArbol {
 	public String getCamino(){
 		
 		return camino;
+	}
+	
+
+	/*
+	 * Indica si el nodo es left-diverse.
+	 */
+	public boolean isLeftDiverse() {
+		return leftDiverse;
+	}
+
+	/*
+	 * etiqueta el nodo como left-diverse o no left-diverse.
+	 */
+	public void setLeftDiverse(boolean leftDiverse) {
+		this.leftDiverse = leftDiverse;
+	}
+	
+	/*
+	 * Obtiene el simbolo izquierdo.
+	 */
+	public String getSimboloIzdo() {
+		return simboloIzdo;
+	}
+
+	/*
+	 * Asigna un simbolo izquierdo.
+	 */
+	public void setSimboloIzdo(String simboloIzdo) {
+		this.simboloIzdo = simboloIzdo;
 	}
 }

@@ -22,7 +22,7 @@ public class Repeticiones {
 		
 		args = new String[2];
 		args[0] = "-c";
-		args[1] = "";
+		args[1] = "bcbabaca";
 		
 		comprobarArgumentos(args);
 		
