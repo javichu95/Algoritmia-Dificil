@@ -265,17 +265,19 @@ public class ArbolSufijos {
 	}
 	
 	/*
-	 * Obtiene la mayor repeticion del texto.
+	 * Obtiene la mayor repetición dentro de la cadena de texto.
 	 */
 	public String mayorRepeticion() {
+		
 		String repetido = "";
-		for(int k = 0; k < hojas.size();k++) {	//Bucle para cada rama del arbol.
-			for(int i = 0; i < hojas.get(k).getCamino().length() && hojas.get(k).getCamino().length()>repetido.length(); i++) {
-				//Cada vez se comprueba una parte del texto.
+		for(int k = 0; k < hojas.size();k++) {	// Bucle para cada rama del arbol.
+			for(int i = 0; i < hojas.get(k).getCamino().length() 
+					&& hojas.get(k).getCamino().length() > repetido.length(); i++) {
+				// Cada vez se comprueba una parte del texto.
 				String subTexto = hojas.get(k).getCamino().substring(0,i+1);
 				for(int j = 0; j < hojas.size(); j++) {
 					if(j!=k) {
-						//Para las otras ramas se comprueba si el texto coincide.
+						// Para las otras ramas se comprueba si el texto coincide.
 						if(subTexto.length() <= hojas.get(j).getCamino().length()) {
 							String cadena = hojas.get(j).getCamino().substring(0,subTexto.length());
 							if(cadena.equals(subTexto) && cadena.length() > repetido.length()) {
@@ -286,7 +288,37 @@ public class ArbolSufijos {
 				}
 			}
 		}
-		return repetido;
 		
+		return repetido;		
+	}
+	
+	/*
+	 * Obtiene las repeticiones maximales del texto.
+	 */
+	public ArrayList<String> maximalRepeticion() {
+		
+		ArrayList <String> repetidos = new ArrayList<String>();
+		String repetido = "";
+		for(int k = 0; k < hojas.size();k++) {	// Bucle para cada rama del arbol.
+			for(int i = 0; i < hojas.get(k).getCamino().length() 
+					&& hojas.get(k).getCamino().length() > repetido.length(); i++) {
+				// Cada vez se comprueba una parte del texto.
+				String subTexto = hojas.get(k).getCamino().substring(0,i+1);
+				for(int j = 0; j < hojas.size(); j++) {
+					if(j!=k) {
+						// Para las otras ramas se comprueba si el texto coincide.
+						if(subTexto.length() <= hojas.get(j).getCamino().length()) {
+							String cadena = hojas.get(j).getCamino().substring(0,subTexto.length());
+							if(cadena.equals(subTexto) && cadena.length() > repetido.length()) {
+								repetidos.add(cadena);
+								repetido = cadena;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return repetidos;		
 	}
 }
