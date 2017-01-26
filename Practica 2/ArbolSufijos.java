@@ -350,6 +350,20 @@ public class ArbolSufijos {
 					}
 				}
 			}
+			//Si no tiene simbolo izquierdo se le pone el '$'.
+			if(etiquetar.getSimboloIzdo() == null) {
+				etiquetar.setSimboloIzdo("$");
+				NodoArbol padre = etiquetar.getPadre();
+				//Se etiqueta a todos los antecesores hasta la raiz.
+				while(!padre.getElemento().equals("r$")) {
+					if(padre.getSimboloIzdo() != null && !padre.getSimboloIzdo().equals("$")) {
+						padre.setLeftDiverse(true);		//Indica que tiene dos hojas con dos simbolos izquierdos distintos.
+					} else {
+						padre.setSimboloIzdo("$");		//Asigna un simbolo.
+					}
+					padre = padre.getPadre();
+				}
+			}
 		}
 	}
 }
