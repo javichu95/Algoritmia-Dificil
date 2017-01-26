@@ -148,10 +148,6 @@ public class ArbolSufijos {
 				hijo.setSigHermano(hermano);
 			}
 		}
-		
-		/*mostrarArbol();
-		System.out.println();
-		System.out.println();*/
 
 		for(int i=0; i<hojas.size(); i++){		// Se recorren todas las hojas.
 			NodoArbol actual = hojas.get(i);	// Se obtiene la hoja actual.
@@ -250,6 +246,7 @@ public class ArbolSufijos {
 	 * Se obtiene el texto contenido desde el nodo hasta la raíz.
 	 */
 	private String getTexto(NodoArbol nodo) {
+		
 		if(nodo.getPadre() != null) {		// Si no es la raiz.
 			String texto = "";
 			// Se obtiene el texto contenido en el nodo.
@@ -297,7 +294,10 @@ public class ArbolSufijos {
 	 * Obtiene las repeticiones maximales del texto.
 	 */
 	public ArrayList<String> maximales() {
+		
+		// Lista para las cadenas maximales.
 		ArrayList<String> maximal = new ArrayList<String>();
+		// Devuelve la lista con las cadenas.
 		return maximales(maximal,raiz.getPrimogenito(),"");	
 	}
 	
@@ -305,27 +305,34 @@ public class ArbolSufijos {
 	 * Obtiene las repeticiones maximales del texto.
 	 */
 	private ArrayList<String> maximales(ArrayList<String> maximal, NodoArbol nodo, String acumulado) {
-		if(nodo == null) {
+		
+		if(nodo == null) {	// Si no hay más nodos, se devuelve la lista.
 			return maximal;
 		}
+		
 		maximal = maximales(maximal, nodo.getSigHermano(),acumulado);
-		acumulado = acumulado + nodo.getElemento();
-		int hijos = numHijos(nodo);
-		if (hijos > 1) {		//Si hay mas de un hijo es un maximal.
+		acumulado = acumulado + nodo.getElemento();	// Camino acumulado.
+		int hijos = numHijos(nodo);		// Número de hijos.
+		if (hijos > 1) {		// Si hay más de un hijo es un maximal.
 			if(!maximal.contains(acumulado)) {
 				maximal.add(acumulado);
 			}
 		} 
+		
 		return maximales(maximal,nodo.getPrimogenito(),acumulado);
 	}
 	
+	/*
+	 * Método que devuelve el número de hijos de un nodo.
+	 */
 	private int numHijos(NodoArbol nodo) {
-		NodoArbol hijo = nodo.getPrimogenito();
-		int hijos = 0;
-		while(hijo != null) {
-			hijos++;
+		
+		NodoArbol hijo = nodo.getPrimogenito();		// Obtiene el primogénito.
+		int hijos = 0;		// Variable para el número de hijos.
+		while(hijo != null) {		// Mientras haya hijos...
+			hijos++;		// Se aumenta la variable.
 			hijo = hijo.getSigHermano();
 		}
-		return hijos;
+		return hijos;		// Se devuelve el número de hijos.
 	}
 }
